@@ -23868,6 +23868,11 @@ test -n "$QMAKE" || QMAKE="echo"
   5.*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: Qt5 found" >&5
 $as_echo "$as_me: Qt5 found" >&6;}
+    if test $CONFIG_OS == MACOS; then :
+  xtraPlug=+macextras
+else
+  unset xtraPlug
+fi
     echo "$as_me: this is autotroll.m4 serial 10" >&5
 
   test x"$TROLL" != x && echo 'ViM rox emacs.'
@@ -24455,10 +24460,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg; do
+  for at_mod in $xtralibs +printsupport +svg $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough

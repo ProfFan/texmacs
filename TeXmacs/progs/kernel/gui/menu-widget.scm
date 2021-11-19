@@ -50,6 +50,7 @@
     (symbol :string? :*)
     (texmacs-output :%2)
     (texmacs-input :%3)
+    (texmacs-input* :%3)
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
     (choice :%3)
@@ -248,6 +249,24 @@
   "Make @(texmacs-input :%3) item."
   (with (tag t tmstyle name) p
     (widget-texmacs-input (t) (tmstyle) (or (name) (url-none)))))
+
+(define texmacs-inputs (make-ahash-table))
+
+(define (make-texmacs-input* p style)
+  "Make @(texmacs-input* :%3) item."
+  (with (tag t tmstyle name) p
+    (let* ((t* (t))
+           (tmstyle* (tmstyle))
+           (name* (name))
+           (key (list tmstyle* name*))
+           (old (ahash-ref texmacs-inputs name*))
+           (w (and old (== (car old) key) (cdr old))))
+      (cond (w w)
+            ((not name*) (widget-texmacs-input t* tmstyle* (url-none)))
+            (else
+              (with w* (widget-texmacs-input t* tmstyle* name*)
+                (ahash-set! texmacs-inputs name* (cons key w*))
+                w*))))))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -640,6 +659,12 @@
     (if linked (make-menu-items linked style bar?)
         (make-menu-error "bad link: " (object->string (cadr p))))))
 
+(define (make-menu-dynamic p style bar?)
+  "Make @(dynamic :%1) menu items."
+  (with dyn (eval (cadr p))
+    (if dyn (make-menu-items dyn style bar?)
+        (make-menu-error "bad link: " (object->string (cadr p))))))
+
 (define (make-menu-promise p style bar?)
   "Make @(promise :%1) menu items."
   (with value ((cadr p))
@@ -710,6 +735,8 @@
     ,(lambda (p style bar?) (list (make-texmacs-output p style))))
   (texmacs-input (:%3)
     ,(lambda (p style bar?) (list (make-texmacs-input p style))))
+  (texmacs-input* (:%3)
+    ,(lambda (p style bar?) (list (make-texmacs-input* p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
   (enum (:%3 :string?)
@@ -726,6 +753,8 @@
           ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
         ,(lambda (p style bar?) (make-menu-link p style bar?)))
+  (dynamic (:%1)
+           ,(lambda (p style bar?) (make-menu-dynamic p style bar?)))
   (horizontal (:*)
               ,(lambda (p style bar?) (list (make-menu-horizontal p style))))
   (vertical (:*)
@@ -792,6 +821,11 @@
   (with linked ((eval (cadr p)))
     (if linked (menu-expand linked) p)))
 
+(define (menu-expand-dynamic p)
+  "Expand menu link @p."
+  (with dyn (eval (cadr p))
+    (if dyn (menu-expand dyn) p)))
+
 (define (menu-expand-if p)
   "Expand conditional menu @p."
   (with (tag pred? . items) p
@@ -827,6 +861,12 @@
   `(texmacs-input ,(replace-procedures (cadr p))
                   ,(replace-procedures (caddr p))
                   ,(replace-procedures (cadddr p))))
+
+(define (menu-expand-texmacs-input* p)
+  "Expand texmacs-input* item @p."
+  `(texmacs-input* ,(replace-procedures (cadr p))
+                   ,(replace-procedures (caddr p))
+                   ,(replace-procedures (cadddr p))))
 
 (define (menu-expand-texmacs-output p)
   "Expand output menu item @p."
@@ -928,6 +968,7 @@
   (color ,replace-procedures)
   (symbol ,replace-procedures)
   (texmacs-input ,menu-expand-texmacs-input)
+  (texmacs-input* ,menu-expand-texmacs-input*)
   (texmacs-output ,menu-expand-texmacs-output)
   (input ,menu-expand-input)
   (enum ,menu-expand-enum)
@@ -937,6 +978,7 @@
   (tree-view ,menu-expand-tree-view)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
+  (dynamic ,menu-expand-dynamic p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
@@ -1122,3 +1164,33 @@
   (:interactive #t)
   (show-message "Restart TeXmacs in order to let changes take effect"
                 "Notification"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Side tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define window-tools-table (make-ahash-table))
+
+(tm-widget (texmacs-side-tool win tool)
+  (centered
+    ===
+    (bold (text (string-append "Missing '" tool "' tool")))))
+
+(tm-define (window->tools win)
+  (or (ahash-ref window-tools-table win) (list)))
+
+(tm-define (set-window-tools win l)
+  (ahash-set! window-tools-table win l))
+
+(tm-define (tool-active? tool . opt-win)
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (and-with l (ahash-ref window-tools-table win)
+      (in? tool l))))
+  
+(tm-define (tool-toggle tool . opt-win)
+  (:check-mark "v" tool-active?)
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (with l (window->tools win)
+      (if (in? tool l)
+          (set-window-tools win (list-remove l tool))
+          (set-window-tools win (cons tool l))))))

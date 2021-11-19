@@ -66,6 +66,11 @@ bool start_server_flag= false;
 string extra_init_cmd;
 void server_start ();
 
+#ifdef QTTEXMACS
+// Qt application infrastructure
+static QTMApplication* qtmapp;
+#endif
+
 /******************************************************************************
 * For testing
 ******************************************************************************/
@@ -423,8 +428,12 @@ TeXmacs_main (int argc, char** argv) {
   // End options via environment variables
 
   // Further user preferences
-  string unify= (gui_version () == "qt4"? string ("on"): string ("off"));
+  string native= (gui_version () == "qt4"? string ("on"): string ("off"));
+  string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
+  use_native_menubar = get_preference ("use native menubar", native) == "on";
   use_unified_toolbar= get_preference ("use unified toolbar", unify) == "on";
+  use_mini_bars      = get_preference ("use minibars", "off") == "on";
+  if (!use_native_menubar) use_unified_toolbar= false;
   // End user preferences
 
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
@@ -436,7 +445,7 @@ TeXmacs_main (int argc, char** argv) {
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
  // init_mac_application ();
 #endif
-    
+
   gui_open (argc, argv);
   set_default_font (the_default_font);
   if (DEBUG_STD) debug_boot << "Starting server...\n";
@@ -465,7 +474,7 @@ TeXmacs_main (int argc, char** argv) {
              (s == "-x") || (s == "-execute") ||
              (s == "-log-file") ||
              (s == "-build-manual") ||
-             (s == "-reference-suite") || (s == "-test-suite")) i++;
+             (s == "-reference-suite") || (s == "-test-suite")) {}
   }
   if (install_status == 1) {
     if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
@@ -490,6 +499,10 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize texmacs");
   bench_reset ("initialize plugins");
   bench_reset ("initialize scheme");
+
+#ifdef QTTEXMACS
+  init_style_sheet (qtmapp);
+#endif
 
   if (DEBUG_STD) debug_boot << "Starting event loop...\n";
   texmacs_started= true;
@@ -648,6 +661,23 @@ main (int argc, char** argv) {
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
+  load_user_preferences ();
+  string theme= get_user_preference ("gui theme", "");
+#if (QT_VERSION >= 0x050000)
+  if (theme == "light")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
+  else if (theme == "dark")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
+  else if (theme == "")
+    tm_style_sheet= theme;
+#else
+  if (theme == "light")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
+  else if (theme == "dark")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-dark.css";
+  else if (theme == "")
+    tm_style_sheet= theme;
+#endif
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS
@@ -667,7 +697,7 @@ main (int argc, char** argv) {
 #endif
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
-  QTMApplication* qtmapp= new QTMApplication (argc, argv);  
+  qtmapp= new QTMApplication (argc, argv);  
 #endif
   TeXmacs_init_paths (argc, argv);
 #ifdef QTTEXMACS

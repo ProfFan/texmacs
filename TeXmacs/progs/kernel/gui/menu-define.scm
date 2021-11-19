@@ -14,6 +14,8 @@
 (texmacs-module (kernel gui menu-define)
   (:use (kernel gui gui-markup)))
 
+(define use-minibars? (== (cpp-get-preference "use minibars" "off") "on"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -108,6 +110,10 @@
 (define (gui-make-texmacs-input x)
   (require-format x '(texmacs-input :%3))
   `($texmacs-input ,@(cdr x)))
+
+(define (gui-make-texmacs-input* x)
+  (require-format x '(texmacs-input* :%3))
+  `($texmacs-input* ,@(cdr x)))
 
 (define (gui-make-input x)
   (require-format x '(input :%4))
@@ -217,6 +223,10 @@
   (require-format x '(icon-tab :%2 :*))
   `($icon-tab ,@(map gui-make (cdr x))))
 
+(define (gui-make-plain-style x)
+  (require-format x '(plain-style :*))
+  `($widget-style 0 ,@(map gui-make (cdr x))))
+
 (define (gui-make-inert x)
   (require-format x '(inert :*))
   `($widget-style ,widget-style-inert ,@(map gui-make (cdr x))))
@@ -263,7 +273,9 @@
 
 (define (gui-make-minibar x)
   (require-format x '(minibar :*))
-  `(gui$minibar ,@(map gui-make (cdr x))))
+  (if use-minibars?
+      `(gui$minibar ,@(map gui-make (cdr x)))
+      `($when #t ,@(map gui-make (cdr x)))))
 
 (define (gui-make-extend x)
   (require-format x '(extend :%1 :*))
@@ -319,7 +331,9 @@
 
 (define (gui-make-mini x)
   (require-format x '(mini :%1 :*))
-  `($mini ,(cadr x) ,@(map gui-make (cddr x))))
+  (if use-minibars?
+      `($mini ,(cadr x) ,@(map gui-make (cddr x)))
+      `($when #t ,@(map gui-make (cddr x)))))
 
 (define (gui-make-symbol x)
   (require-format x '(symbol :string? :*))
@@ -384,6 +398,7 @@
   (color ,gui-make-color)
   (texmacs-output ,gui-make-texmacs-output)
   (texmacs-input ,gui-make-texmacs-input)
+  (texmacs-input* ,gui-make-texmacs-input*)
   (input ,gui-make-input)
   (enum ,gui-make-enum)
   (choice ,gui-make-choice)
@@ -411,6 +426,7 @@
   (tab ,gui-make-tab)
   (icon-tabs ,gui-make-icon-tabs)
   (icon-tab ,gui-make-icon-tab)
+  (plain-style ,gui-make-plain-style)
   (inert ,gui-make-inert)
   (explicit-buttons ,gui-make-explicit-buttons)
   (bold ,gui-make-bold)

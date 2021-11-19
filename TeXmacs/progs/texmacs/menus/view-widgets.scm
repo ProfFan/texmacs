@@ -20,7 +20,10 @@
 (tm-define (get-retina-preference which)
   (if (cpp-has-preference? which)
       (get-preference which)
-      (cond ((== which "retina-scale") (number->string (get-retina-scale)))
+      (cond ((== which "retina-scale")
+             (cond ((== (get-retina-scale) 1.0) "1")
+                   ((== (get-retina-scale) 2.0) "2")
+                   (else (number->string (get-retina-scale)))))
             (else ""))))
 
 (tm-define (set-retina-preference which val)
@@ -45,7 +48,7 @@
 
 (tm-widget (retina-settings-widget cmd)
   (centered
-    (assuming (os-macos?)
+    (assuming (and (os-macos?) (qt4-gui?))
       (centered
 	(aligned
 	  (meti (hlist // (text "Use retina fonts"))
@@ -53,10 +56,7 @@
 		    (get-retina-boolean-preference "retina-factor")))
 	  (meti (hlist // (text "Use retina icons"))
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
-		    (get-retina-boolean-preference "retina-icons")))
-	  (meti (hlist // (text "Use unified toolbars"))
-            (toggle (set-boolean-preference "use unified toolbar" answer)
-                    (get-boolean-preference "use unified toolbar")))))
+		    (get-retina-boolean-preference "retina-icons")))))
       ===
       (aligned
         (item (text "Graphical interface font scale:")
@@ -64,6 +64,17 @@
                 '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
                 (get-retina-preference "retina-scale")
                 "5em"))))
+    (assuming (and (os-macos?) (qt5-or-later-gui?))
+      (centered
+        (aligned
+	  (item (text "Use retina fonts:")
+	    (toggle (set-retina-boolean-preference "retina-factor" answer)
+		    (get-retina-boolean-preference "retina-factor")))
+          (item (text "Scale graphical interface:")
+            (enum (set-retina-preference "retina-scale" answer)
+                  '("1" "1.2" "1.5" "2" "")
+                  (get-retina-preference "retina-scale")
+                  "5em")))))
     (assuming (not (os-macos?))
       (centered
 	(aligned
@@ -76,7 +87,7 @@
     === ===
     (bottom-buttons
       ("Cancel" (cmd "cancel")) >>
-      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) //
+      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) // //
       ("Ok" (cmd "ok")))))
 
 

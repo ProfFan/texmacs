@@ -7311,6 +7311,21 @@ tmg_system_rmdir (tmscm arg1) {
 }
 
 tmscm
+tmg_system_setenv (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "system-setenv");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "system-setenv");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  set_env (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_system_search_score (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-search-score");
   TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "system-search-score");
@@ -8046,7 +8061,7 @@ tmg_widget_extend (tmscm arg1, tmscm arg2) {
   array_widget in2= tmscm_to_array_widget (arg2);
 
   // TMSCM_DEFER_INTS;
-  widget out= extend (in1, in2);
+  widget out= extend_widget (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
@@ -10585,6 +10600,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-remove",  tmg_system_remove, 1, 0, 0);
   tmscm_install_procedure ("system-mkdir",  tmg_system_mkdir, 1, 0, 0);
   tmscm_install_procedure ("system-rmdir",  tmg_system_rmdir, 1, 0, 0);
+  tmscm_install_procedure ("system-setenv",  tmg_system_setenv, 2, 0, 0);
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);

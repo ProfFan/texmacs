@@ -16,7 +16,9 @@
 
 (use-modules (prog scheme-tools) (prog scheme-menu)
              (doc apidoc) (doc apidoc-widgets)
-             (language natural))
+             (language natural)
+             ;; Experimental (should be put elsewhere)
+             (generic format-tools))
 
 (define (scm-load-buffer u)
    (load-document u) 
@@ -43,5 +45,11 @@
     (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm")))
   ((replace "Open %1" (verbatim "preferences.scm"))
    (scm-load-buffer
-    (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm"))))
-
+    (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm")))
+  (assuming (side-tools?)
+    ---
+    (group "Experimental side tools")
+    ("Context" (tool-toggle "context"))
+    ("Invalid" (tool-toggle "invalid"))
+    ("Paragraph (Format)" (tool-toggle "format paragraph"))
+    ("Paragraph (Document)" (tool-toggle "document paragraph"))))
