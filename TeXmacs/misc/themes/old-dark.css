@@ -4,23 +4,18 @@
 ****************************************************************************/
 
 QWidget {
-    background: #404040;
-    color: #e0e0e0;
     font-size: 14px;
-    icon-size: 16px;
 }
 
-QAbstractScrollArea, QTableView {
+QAbstractScrollArea {
     background: #202020;
 }
 
-QFileDialog {
-    min-width: 800px;
-    min-height: 600px;
-}
-
-QFileDialog QAbstractScrollArea, QFileDialog QWidget::section {
-    background: #202020;
+QLineEdit {
+    background: #606060;
+    min-height: 16px;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 QToolTip {
@@ -34,46 +29,34 @@ QToolTip {
 * Toolbars
 ****************************************************************************/
 
-QMenuBar, QMenuBar QWidget {
-    background: #2C2C2C;
-}
-
 QMenuBar {
-    padding-top: 5px;
-    spacing: 10px;
+    background: #2C2C2C;
 }
 
 QMenuBar::item {
+    padding: 4px 10px;
+    padding-bottom: 2px;
     background: #2C2C2C;
-}
-
-MacosQMenuBar::item {
-    padding: 0px 5px;
-    padding-top: 10px;
 }
 
 QMenuBar::item:selected {
     background: #2C6080;
-
 }
 
 QToolBar {
+    background: #2C2C2C;
     border-bottom: 1px solid #505050;
 }
 
-QToolBar, QToolBar#mainToolBar QWidget {
-    background: #2C2C2C;
-}
-
-QToolBar#modeToolBar, QToolBar#modeToolBar QWidget {
+QToolBar#modeToolBar {
     background: #363636;
 }
 
-QToolBar#focusToolBar, QToolBar#focusToolbar QWidget {
+QToolBar#focusToolBar {
     background: #404040;
 }
 
-QToolBar#userToolBar, QToolBar#userToolbar QWidget {
+QToolBar#userToolBar {
     background: #4A4A4A;
 }
 
@@ -90,28 +73,16 @@ QStatusBar {
     padding-right: 5px;
 }
 
-QStatusBar::item, QStatusBar QWidget {
-    background: #2C2C2C;
-    border: 0px;
-}
-
 /****************************************************************************
 * Menus
 ****************************************************************************/
 
 QMenu {
     background: #2C2C2C;
-    color: #FEFEFE;
 }
 
 QMenu::item {
     background: #2C2C2C;
-    color: #FEFEFE;
-}
-
-MingwQMenu::item {
-    padding-left: 15px;
-    padding-right: 12px;
 }
 
 QMenu::item * {
@@ -125,7 +96,6 @@ QMenu::item * QToolTip {
 
 QMenu::item:selected {
     background: #2C6080;
-    color: #FEFEFE;
 }
 
 QMenu::item:disabled {
@@ -141,23 +111,6 @@ QMenu::separator {
     background: #686868;
     height: 1px;
     margin: 6px 3px;
-}
-
-/****************************************************************************
-* Line edit
-****************************************************************************/
-
-QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
-    background: #606060;
-    selection-color: #E0E0E0;
-    selection-background-color: #004080;
-    min-height: 16px;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
-QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidget QLineEdit:focus, QToolBar#userToolbar QWidget QLineEdit:focus {
-    border: 1px solid #A0C0E0;
 }
 
 /****************************************************************************
@@ -182,23 +135,12 @@ QListView::item:selected {
 
 QComboBox {
     background: #606060;
-    color: #E0E0E0;
-    selection-background-color: #004080;
-    selection-color: #E0E0E0;
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
     border: 0px;
     border-radius: 5px;
     min-height: 18px;
-}
-    
-Qt4QComboBox {
-    margin: 3px;
-}
-
-QComboBox:focus {
-    border: 1px solid #A0C0E0;
 }
 
 QComboBox::drop-down {
@@ -208,23 +150,12 @@ QComboBox::drop-down {
     border-bottom-right-radius: 5px;
 }
 
-MingwQComboBox::drop-down {
-    padding-right: 10px;
-}
-
 QComboBox::down-arrow {
     border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png) 0 0 0 0 stretch stretch;
 }
 
-MingwQComboBox::down-arrow {
-    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
-}
-
 QComboBox QAbstractItemView {
     background: #404040;
-    color: #E0E0E0;
-    selection-background-color: #004080;
-    selection-color: #E0E0E0;
 }
 
 /****************************************************************************
@@ -242,8 +173,8 @@ QTabBar::tab {
     border-top-right-radius: 5px;
 }
 
-QTabBar::tab:selected {
-    background: #404040;
+QTabBar::tab::selected {
+    background: #3C3C3C;
     margin-top: 0px;
     padding: 3px;
     padding-left: 10px;
@@ -254,27 +185,9 @@ QTabBar::tab:selected {
     border-top-right-radius: 5px;
 }
 
-QTabWidget::pane {
-    background: #404040;
-    border: 1px solid #A0A0A0;
-    margin-top: -1px;
-    padding: 5px;
-    border-radius: 5px;
-}
-
 /****************************************************************************
 * Buttons
 ****************************************************************************/
-
-QCheckBox, QCheckBox::indicator {
-    min-width: 10px;
-    min-height: 10px;
-}
-
-QCheckBox:focus {
-    border: 0px solid #A0C0E0;
-    border-radius: 2px;
-}
 
 QPushButton {
     background: #707070;
@@ -285,12 +198,6 @@ QPushButton {
     border-right: 1px solid #404040;
     border-bottom: 1px solid #404040;
     border-radius: 5px;
-}
-
-Qt4QPushButton {
-    margin: 3px;
-    margin-left: 6px;
-    margin-right: 6px;
 }
 
 QPushButton:pressed {
@@ -306,123 +213,37 @@ QPushButton:pressed {
     border-radius: 5px;
 }
 
-QPushButton:focus {
-    border: 0px solid #A0C0E0;
-}
-
-QToolButton,
-QToolBar#mainToolBar QToolButton,
-QToolBar#modeToolBar QToolButton {
+QToolButton {
     background: none;
     padding-left: 0px;
     padding-right: 0px;
 }
 
-Qt4QToolButton {
-    background-color: rgba(96,96,96,0%);
-}
-
-QToolButton:hover,
-QToolBar#mainToolBar QToolButton:hover,
-QToolBar#modeToolBar QToolButton:hover,
-QToolBar#focusToolBar QToolButton:hover {
+QToolButton:hover {
     background: none;
-    /* FIXME: bug under MacOS when using a color */
+    /* FIXME: bug when using a color */
 }
 
-Qt4QToolButton:hover,
-Qt4QToolBar#mainToolBar QToolButton:hover,
-Qt4QToolBar#modeToolBar QToolButton:hover,
-Qt4QToolBar#focusToolBar QToolButton:hover,
-NomacQToolButton:hover,
-NomacQToolBar#mainToolBar QToolButton:hover,
-NomacQToolBar#modeToolBar QToolButton:hover,
-NomacQToolBar#focusToolBar QToolButton:hover {
+NomacQToolButton:hover {
     background: #585858;
     border: 0px;
     border-radius: 3px;
 }
 
-QToolButton:pressed,
-QToolButton:checked,
-QToolBar#mainToolBar QToolButton:pressed,
-QToolBar#mainToolBar QToolButton:checked,
-QToolBar#modeToolBar QToolButton:pressed,
-QToolBar#modeToolBar QToolButton:checked,
-QToolBar#focusToolBar QToolButton:pressed,
-QToolBar#focusToolBar QToolButton:checked {
+QToolButton:pressed, QToolButton:checked {
     background: #808080;
     border: 0px;
     border-radius: 3px;
 }
 
-QToolButton::menu-indicator,
-QToolBar#mainToolBar QToolButton::menu-indicator,
-QToolBar#modeToolBar QToolButton::menu-indicator {
+QToolButton::menu-indicator {
     border: none;
     background: none;
     image: none;
 }
 
-QToolButton::disabled,
-QToolBar#mainToolBar QToolButton:disabled,
-QToolBar#modeToolBar QToolButton:disabled {
+QToolButton::disabled {
     color: #909090;
-}
-
-/****************************************************************************
-* Scrollbars
-****************************************************************************/
-
-QScrollBar, QAbstractScrollArea::corner {
-    background: #404040;
-}
-
-QScrollBar::handle {
-    background: #808080;
-    border: 0px;
-    margin: 2px;
-}
-
-MacosQScrollBar::handle {
-    border-radius: 5px;
-}
-
-QScrollBar::add-line:horizontal,
-QScrollBar::sub-line:horizontal,
-QScrollBar::add-page:horizontal,
-QScrollBar::sub-page:horizontal,
-QScrollBar::add-line:vertical,
-QScrollBar::sub-line:vertical,
-QScrollBar::add-page:vertical,
-QScrollBar::sub-page:vertical {
-    border: none;
-    background: none;
-    height: 5px;
-}
-
-QScrollBar:horizontal {
-    max-height: 16px;
-}
-
-QScrollBar::handle:horizontal {
-    min-width: 16px;
-}
-
-MingwQScrollBar::handle:horizontal {
-    margin: 2px 0px;
-}
-
-QScrollBar:vertical {
-    max-width: 16px;
-}
-
-QScrollBar::handle:vertical {
-    min-height: 16px;
-}
-
-MingwQScrollBar::handle:vertical {
-    margin: 0px 2px;
 }
 
 /****************************************************************************
@@ -474,10 +295,6 @@ QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     border: none;
 }
 
-QDockWidget#sideTools QWidget#discrete QPushButton:focus {
-    border: 0px solid #A0C0E0;
-}
-
 /****************************************************************************
 * Tab bar with several options for sections
 ****************************************************************************/
@@ -521,11 +338,6 @@ QDockWidget#sideTools QWidget#sections QPushButton:pressed {
     border: none;
     border-radius: 5px;
     padding: 5px;
-}
-
-
-QDockWidget#sideTools QWidget#sections QPushButton:focus {
-    border: 0px solid #A0C0E0;
 }
 
 QDockWidget#sideTools QWidget#sections QWidget#active-section QPushButton,
@@ -592,11 +404,6 @@ QDockWidget#sideTools QWidget#section-tabs QPushButton:pressed {
     border-top-right-radius: 5px;
 }
 
-
-QDockWidget#sideTools QWidget#section-tabs QPushButton:focus {
-    border: 0px solid #A0C0E0;
-}
-
 QDockWidget#sideTools QWidget#section-tabs QWidget#section-active-tab QPushButton {
     background: #404040;
     color: #E0E0E0;
@@ -606,4 +413,53 @@ QDockWidget#sideTools QWidget#section-tabs QWidget#section-active-tab QPushButto
     border-top-right-radius: 5px;
     padding: 5px 8px;
     margin: 0px;
+}
+
+/****************************************************************************
+* Adjustments for Windows
+****************************************************************************/
+
+MingwQScrollBar {
+    background: #404040;
+}
+
+MingwQScrollBar::handle {
+    background: #606060;
+    border: 0px;
+    margin: 2px;
+    min-height: 20px;
+}
+
+MingwQScrollBar::add-line:horizontal,
+MingwQScrollBar::sub-line:horizontal,
+MingwQScrollBar::add-page:horizontal,
+MingwQScrollBar::sub-page:horizontal,
+MingwQScrollBar::add-line:vertical,
+MingwQScrollBar::sub-line:vertical,
+MingwQScrollBar::add-page:vertical,
+MingwQScrollBar::sub-page:vertical {
+    background: none;
+    border: 0px;
+}
+
+MingwQStatusBar::item {
+    background: #2C2C2C;
+    border: 0px;
+}
+
+MingwQMenu::item {
+    padding-left: 15px;
+    padding-right: 12px;
+}
+
+MingwQMenu::right_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
+}
+
+MingwQComboBox::drop_down {
+    padding-right: 10px;
+}
+
+MingwQComboBox::down_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
 }

@@ -219,16 +219,13 @@
         ((tree-atomic? t) (upward-context-trees (tree-up t)))
         (else (cons t (upward-context-trees (tree-up t))))))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "context"))
-  (centered
-    (centered
-      (bold (text "Context tool")))
-    (for (t (reverse (upward-context-trees (cursor-tree))))
-      ===
-      (horizontal
-        ((eval (symbol->string (tree-label t)))
-         (tree-select t))))))
+(tm-tool (context-tool win)
+  (:name "Context tool")
+  (for (t (reverse (upward-context-trees (cursor-tree))))
+    ===
+    (horizontal
+      ((eval (symbol->string (tree-label t)))
+       (tree-select t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs bottom tools

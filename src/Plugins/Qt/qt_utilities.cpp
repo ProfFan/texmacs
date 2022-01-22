@@ -683,7 +683,6 @@ parse_tm_style (int style) {
     sheet += "border:1px solid rgb(255, 0, 0);";
 
   if (occurs ("dark", tm_style_sheet)) {
-    sheet += "color: #e0e0e0;";
     if (style & WIDGET_STYLE_GREY) sheet += "color: #a0a0a0;";
     if (style & WIDGET_STYLE_INERT) sheet += "color: #a0a0a0;";
   }
@@ -913,9 +912,10 @@ init_palette (QApplication* app) {
     pal.setColor (QPalette::Dark, QColor (112, 112, 112));
     pal.setColor (QPalette::Mid, QColor (128, 128, 128));
     pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
+    pal.setColor (QPalette::HighlightedText, QColor (48, 48, 48));
     app->setPalette (pal);
   }
-  else if (tm_style_sheet != "") {
+  else if (tm_style_sheet != "" && !occurs ("native", tm_style_sheet)) {
     QPalette pal= app -> style () -> standardPalette ();
     pal.setColor (QPalette::Window, QColor (232, 232, 232));
     pal.setColor (QPalette::WindowText, QColor (0, 0, 0));
@@ -927,12 +927,17 @@ init_palette (QApplication* app) {
     pal.setColor (QPalette::Dark, QColor (192, 192, 192));
     pal.setColor (QPalette::Mid, QColor (160, 160, 160));
     pal.setColor (QPalette::Shadow, QColor (0, 0, 0));
-    pal.setColor (QPalette::HighlightedText, QColor (192, 192, 192));
+    pal.setColor (QPalette::HighlightedText, QColor (255, 255, 255));
     app->setPalette (pal);
   }
     
   if (occurs ("dark", tm_style_sheet))
     tm_background= rgb_color (32, 32, 32);
+  else if (occurs ("native", tm_style_sheet)) {
+    QPalette pal = app -> palette ();
+    QColor   col = pal.color (QPalette::Mid);
+    tm_background= rgb_color (col.red (), col.green (), col.blue ());
+  }
   else if (tm_style_sheet != "")
     tm_background= rgb_color (160, 160, 160);
 }
@@ -962,15 +967,41 @@ void
 init_style_sheet (QApplication* app) {
   string ss;
   url css (tm_style_sheet);
+  if (!exists (css)) {
+    if (suffix (css) == "") css= glue (css, ".css");
+    url dir ("$TEXMACS_THEME_PATH");
+    css= resolve (dir * css);
+    if (is_none (css)) return;
+  }
   if (tm_style_sheet != "" && !load_string (css, ss, false)) {
     string p= as_string (url ("$TEXMACS_PATH"));
+#ifdef Q_OS_WIN
+    p = replace (p , "\\", "/");
+#endif
     ss= replace (ss, "\n", " ");
     ss= replace (ss, "\t", " ");
-    ss= replace (ss, "$TEXMACS_PATH", p); // TODO: check under Windows
+    ss= replace (ss, "$TEXMACS_PATH", p);
 #if (QT_VERSION < 0x050000)
     ss= replace (ss, "Qt4", "");
 #endif
-    //ss= scale_font_sizes (ss);
+#ifdef OS_MACOS
+    ss= replace (ss, "Macos", "");
+#else
+    ss= replace (ss, "Nomac", "");
+#endif
+#ifdef OS_MINGW
+    ss= replace (ss, "Mingw", "");
+#endif
+#ifdef OS_GNU_LINUX
+    ss= replace (ss, "Linux", "");
+#endif
+    if (use_unified_toolbar)
+      ss= replace (ss, "Uni", "");
+    else
+      ss= replace (ss, "Nonuni", "");
+    if (!use_unified_toolbar ||
+        get_preference ("main icon bar", "off") != "off")
+      ss= replace (ss, "Nounim", "");
     ss= scale_px (ss);
     current_style_sheet= ss;
     app->setStyleSheet (to_qstring (current_style_sheet));

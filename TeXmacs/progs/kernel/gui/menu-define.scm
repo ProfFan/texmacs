@@ -83,6 +83,10 @@
   (require-format x '(refreshable :%1 :*))
   `($refreshable ,(cadr x) ,@(map gui-make (cddr x))))
 
+(define (gui-make-cached x)
+  (require-format x '(cached :%1 :%1 :*))
+  `($cached ,(cadr x) ,(caddr x) ,@(map gui-make (cdddr x))))
+
 (define (gui-make-group x)
   (require-format x '(group :%1))
   `($menu-group ,(cadr x)))
@@ -111,10 +115,6 @@
   (require-format x '(texmacs-input :%3))
   `($texmacs-input ,@(cdr x)))
 
-(define (gui-make-texmacs-input* x)
-  (require-format x '(texmacs-input* :%3))
-  `($texmacs-input* ,@(cdr x)))
-
 (define (gui-make-input x)
   (require-format x '(input :%4))
   `($input ,@(cdr x)))
@@ -134,6 +134,10 @@
 (define (gui-make-filtered-choice x)
   (require-format x '(filtered-choice :%4))
   `($filtered-choice ,@(cdr x)))
+
+(define (gui-make-color-input x)
+  (require-format x '(color-input :%3))
+  `($color-input ,@(cdr x)))
 
 (define (gui-make-tree-view x)
   (require-format x '(tree-view :%3))
@@ -194,6 +198,14 @@
 (define (gui-make-vlist x)
   (require-format x '(vlist :*))
   `($vlist ,@(map gui-make (cdr x))))
+
+(define (gui-make-division x)
+  (require-format x '(division :%1 :*))
+  `($division ,(cadr x) ,@(map gui-make (cddr x))))
+
+(define (gui-make-class x)
+  (require-format x '(class :%1 :*))
+  `($class ,(cadr x) ,@(map gui-make (cddr x))))
 
 (define (gui-make-aligned x)
   (require-format x '(aligned :*))
@@ -391,6 +403,7 @@
   (loop ,gui-make-loop)
   (refresh ,gui-make-refresh)
   (refreshable ,gui-make-refreshable)
+  (cached ,gui-make-cached)
   (group ,gui-make-group)
   (text ,gui-make-text)
   (invisible ,gui-make-invisible)
@@ -398,13 +411,13 @@
   (color ,gui-make-color)
   (texmacs-output ,gui-make-texmacs-output)
   (texmacs-input ,gui-make-texmacs-input)
-  (texmacs-input* ,gui-make-texmacs-input*)
   (input ,gui-make-input)
   (enum ,gui-make-enum)
   (choice ,gui-make-choice)
   (choices ,gui-make-choices)
   (tree-view ,gui-make-tree-view)
   (filtered-choice ,gui-make-filtered-choice)
+  (color-input ,gui-make-color-input)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)
   (replace ,gui-make-replace)
@@ -419,6 +432,8 @@
   (vertical ,gui-make-vertical)
   (hlist ,gui-make-hlist)
   (vlist ,gui-make-vlist)
+  (division ,gui-make-division)
+  (class ,gui-make-class)
   (aligned ,gui-make-aligned)
   (item ,gui-make-item)
   (meti ,gui-make-meti)
